@@ -12,6 +12,7 @@ import {
   formatTime,
   getDayNameFromDate,
   getNext30Days,
+  isSameDay,
 } from "../utils/dateTime";
 import { BookingModal } from "./BookingModal";
 
@@ -32,9 +33,9 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
 
   const next30Days = getNext30Days();
 
-  const getSlotsByDate = (dateString: string) => {
+  const getSlotsByDate = (targetDate: Date) => {
     let filteredSlots = psychologist.availability.filter(
-      (slot) => slot.date === dateString && !slot.isBooked
+      (slot) => isSameDay(slot.startDateTime, targetDate) && !slot.isBooked
     );
 
     if (modalityFilter !== "all") {
@@ -43,7 +44,7 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
       );
     }
 
-    return filteredSlots.sort((a, b) => a.startTime.localeCompare(b.startTime));
+    return filteredSlots.sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
   };
 
   const handleSlotClick = (slot: TimeSlot) => {
@@ -147,18 +148,18 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
 
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4 max-h-96 overflow-y-auto">
-          {next30Days.map((dateString) => {
-            const daySlots = getSlotsByDate(dateString);
-            const date = new Date(dateString);
+          {next30Days.map((date) => {
+            const daySlots = getSlotsByDate(date);
+            const dateKey = date.toISOString().split('T')[0];
 
             return (
               <div
-                key={dateString}
+                key={dateKey}
                 className="border border-gray-200 rounded-lg p-4 min-h-[200px]"
               >
                 <div className="text-center mb-4">
                   <h3 className="font-semibold text-gray-900">
-                    {getDayNameFromDate(dateString)}
+                    {getDayNameFromDate(date)}
                   </h3>
                   <p className="text-sm text-gray-600">
                     {date.getDate()}/{date.getMonth() + 1}
@@ -187,7 +188,7 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
                       >
                         <div className="flex items-center space-x-1">
                           <Clock className="w-3 h-3 hidden mg:inline" />
-                          <span>{formatTime(slot.startTime)}</span>
+                          <span>{formatTime(slot.startDateTime)}</span>
                         </div>
                         <div className="flex items-center space-x-1">
                           {getModalityIcon(slot.modality)}

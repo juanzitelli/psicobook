@@ -13,9 +13,8 @@ export interface Psychologist {
 export interface TimeSlot {
   id: string;
   psychologistId: string;
-  date: string; // "2025-01-15"
-  startTime: string;
-  endTime: string;
+  startDateTime: Date;
+  endDateTime: Date;
   modality: 'online' | 'presencial';
   isBooked: boolean;
   bookedBy?: string; // Session ID that booked this slot
@@ -25,14 +24,14 @@ export interface Session {
   id: string;
   psychologistId: string;
   patientName: string;
+  patientDni: string;
   patientEmail: string;
-  date: string;
-  startTime: string;
-  endTime: string;
+  startDateTime: Date;
+  endDateTime: Date;
   specialty: string;
   modality: 'online' | 'presencial';
   status: 'scheduled' | 'completed' | 'cancelled';
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface Filter {

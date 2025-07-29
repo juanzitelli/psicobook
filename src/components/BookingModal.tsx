@@ -2,6 +2,7 @@ import {
   Calendar,
   CheckCircle,
   Clock,
+  CreditCard,
   MapPin,
   Monitor,
   User,
@@ -11,7 +12,7 @@ import React, { useState } from "react";
 import { mockPsychologists } from "../data/mockData";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { Psychologist, Session, TimeSlot } from "../types";
-import { formatDateString, formatTime } from "../utils/dateTime";
+import { formatDate, formatTimeRange } from "../utils/dateTime";
 
 interface BookingModalProps {
   psychologist: Psychologist;
@@ -27,6 +28,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
   const [formData, setFormData] = useState({
     patientName: "",
+    patientDni: "",
     patientEmail: "",
     specialty: psychologist.specialties[0],
   });
@@ -41,14 +43,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       id: Date.now().toString(),
       psychologistId: psychologist.id,
       patientName: formData.patientName,
+      patientDni: formData.patientDni,
       patientEmail: formData.patientEmail,
-      date: timeSlot.date,
-      startTime: timeSlot.startTime,
-      endTime: timeSlot.endTime,
+      startDateTime: new Date(timeSlot.startDateTime),
+      endDateTime: new Date(timeSlot.endDateTime),
       specialty: formData.specialty,
       modality: timeSlot.modality,
       status: "scheduled",
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
     };
 
     setSessions([...sessions, newSession]);
@@ -108,12 +110,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
                 <div className="flex items-center">
                   <Calendar className="w-4 h-4 mr-2" />
-                  {formatDateString(timeSlot.date)}
+                  {formatDate(timeSlot.startDateTime)}
                 </div>
                 <div className="flex items-center">
                   <Clock className="w-4 h-4 mr-2" />
-                  {formatTime(timeSlot.startTime)} -{" "}
-                  {formatTime(timeSlot.endTime)}
+                  {formatTimeRange(timeSlot.startDateTime, timeSlot.endDateTime)}
                 </div>
                 <div className="flex items-center">
                   {getModalityIcon(timeSlot.modality)}
@@ -182,12 +183,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 >
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-1" />
-                    {formatDateString(timeSlot.date)}
+                    {formatDate(timeSlot.startDateTime)}
                   </div>
                   <div className="flex items-center">
                     <Clock className="w-4 h-4 mr-1" />
-                    {formatTime(timeSlot.startTime)} -{" "}
-                    {formatTime(timeSlot.endTime)}
+                    {formatTimeRange(timeSlot.startDateTime, timeSlot.endDateTime)}
                   </div>
                   <div className="flex items-center">
                     {getModalityIcon(timeSlot.modality)}
@@ -214,6 +214,24 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 }
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Tu nombre completo"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                DNI *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.patientDni}
+                onChange={(e) =>
+                  setFormData({ ...formData, patientDni: e.target.value })
+                }
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="12345678"
+                pattern="[0-9]{7,8}"
+                title="Ingresa un DNI válido (7-8 dígitos)"
               />
             </div>
 
