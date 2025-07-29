@@ -19,7 +19,14 @@ import { formatDate, formatTimeRange } from "../utils/dateTime";
 import { mockPsychologists } from "../data/mockData";
 
 export const MyBookings: React.FC = () => {
-  const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
+  const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", [], (sessions: any[]) => {
+    return sessions.map(session => ({
+      ...session,
+      startDateTime: new Date(session.startDateTime),
+      endDateTime: new Date(session.endDateTime),
+      createdAt: new Date(session.createdAt)
+    }));
+  });
   const [searchForm, setSearchForm] = useState({
     dni: "",
     email: "",
