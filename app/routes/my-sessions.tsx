@@ -195,6 +195,16 @@ export default function MySessions() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+              <Search className="w-5 h-5 mr-2" />
+              Buscar mis sesiones
+            </h2>
+
+            <Form method="post" className="space-y-4">
+              <input type="hidden" name="intent" value="search" />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     DNI *
@@ -232,27 +242,19 @@ export default function MySessions() {
                   />
                 </div>
               </div>
+
               {actionData?.error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-red-800 text-sm">{actionData.error}</p>
                 </div>
               )}
+
               {hasSessionsData(actionData) && actionData.message && (
                 <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                   <p className="text-green-800 text-sm">{actionData.message}</p>
                 </div>
               )}
-              {/*@ts-expect-error*/}
-              {actionData?.error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-800 text-sm">{actionData.error}</p>
-                </div>
-              )}
-              {hasSessionsData(actionData) && actionData.message && (
-                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-green-800 text-sm">{actionData.message}</p>
-                </div>
-              )}
+
               <div className="flex space-x-3">
                 <button
                   type="submit"
