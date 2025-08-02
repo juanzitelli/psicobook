@@ -1,3 +1,5 @@
+// app/components/BookingModal.tsx
+import { Form } from "@remix-run/react";
 import {
   Calendar,
   CheckCircle,
@@ -5,74 +7,33 @@ import {
   MapPin,
   Monitor,
   User,
-  X
+  X,
 } from "lucide-react";
-import React, { useState } from "react";
-import { mockPsychologists } from "../data/mockData";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { Psychologist, Session, TimeSlot } from "../types";
-import { formatDate, formatTimeRange } from "../utils/dateTime";
+import { useEffect, useState } from "react";
+import { formatDate, formatTimeRange } from "~/utils/dateTime";
 
 interface BookingModalProps {
-  psychologist: Psychologist;
-  timeSlot: TimeSlot;
+  psychologist: any; // any porque viene serializado de Remix
+  timeSlot: any; // any porque viene serializado de Remix
   onClose: () => void;
+  actionData?: any;
+  isSubmitting: boolean;
 }
 
-export const BookingModal: React.FC<BookingModalProps> = ({
+export function BookingModal({
   psychologist,
   timeSlot,
   onClose,
-}) => {
-  const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
-  const [formData, setFormData] = useState({
-    patientName: "",
-    patientDni: "",
-    patientEmail: "",
-    specialty: psychologist.specialties[0],
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  actionData,
+  isSubmitting,
+}: BookingModalProps) {
   const [isConfirmed, setIsConfirmed] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    const newSession: Session = {
-      id: Date.now().toString(),
-      psychologistId: psychologist.id,
-      patientName: formData.patientName,
-      patientDni: formData.patientDni,
-      patientEmail: formData.patientEmail,
-      startDateTime: new Date(timeSlot.startDateTime),
-      endDateTime: new Date(timeSlot.endDateTime),
-      specialty: formData.specialty,
-      modality: timeSlot.modality,
-      status: "scheduled",
-      createdAt: new Date(),
-    };
-
-    setSessions([...sessions, newSession]);
-
-    // Mark slot as booked
-    const psychologistIndex = mockPsychologists.findIndex(
-      (p) => p.id === psychologist.id
-    );
-    if (psychologistIndex !== -1) {
-      const slotIndex = mockPsychologists[
-        psychologistIndex
-      ].availability.findIndex((s) => s.id === timeSlot.id);
-      if (slotIndex !== -1) {
-        mockPsychologists[psychologistIndex].availability[slotIndex].isBooked =
-          true;
-        mockPsychologists[psychologistIndex].availability[slotIndex].bookedBy =
-          newSession.id;
-      }
+  useEffect(() => {
+    if (actionData?.success) {
+      setIsConfirmed(true);
     }
-
-    setIsSubmitting(false);
-    setIsConfirmed(true);
-  };
+  }, [actionData]);
 
   const getModalityIcon = (modality: string) => {
     return modality === "online" ? (
@@ -85,6 +46,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const getModalityLabel = (modality: string) => {
     return modality === "online" ? "Online" : "Presencial";
   };
+
   if (isConfirmed) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -95,7 +57,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               ¡Sesión agendada con éxito!
             </h3>
             <p className="text-gray-600 mb-6">
-              Hemos enviado los detalles de tu cita a {formData.patientEmail}
+              Hemos enviado los detalles de tu cita por email
             </p>
 
             <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
@@ -113,7 +75,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
                 <div className="flex items-center">
                   <Clock className="w-4 h-4 mr-2" />
-                  {formatTimeRange(timeSlot.startDateTime, timeSlot.endDateTime)}
+                  {formatTimeRange(
+                    timeSlot.startDateTime,
+                    timeSlot.endDateTime
+                  )}
                 </div>
                 <div className="flex items-center">
                   {getModalityIcon(timeSlot.modality)}
@@ -152,6 +117,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             </button>
           </div>
 
+          {actionData?.error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800 text-sm">{actionData.error}</p>
+            </div>
+          )}
+
           <div
             className={`rounded-lg p-4 mb-6 ${
               timeSlot.modality === "online" ? "bg-green-50" : "bg-purple-50"
@@ -186,7 +157,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   </div>
                   <div className="flex items-center">
                     <Clock className="w-4 h-4 mr-1" />
-                    {formatTimeRange(timeSlot.startDateTime, timeSlot.endDateTime)}
+                    {formatTimeRange(
+                      timeSlot.startDateTime,
+                      timeSlot.endDateTime
+                    )}
                   </div>
                   <div className="flex items-center">
                     {getModalityIcon(timeSlot.modality)}
@@ -199,20 +173,37 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <Form method="post" className="space-y-4">
+            <input type="hidden" name="intent" value="book" />
+            <input
+              type="hidden"
+              name="psychologistId"
+              value={psychologist.id}
+            />
+            <input type="hidden" name="timeSlotId" value={timeSlot.id} />
+            <input
+              type="hidden"
+              name="startDateTime"
+              value={timeSlot.startDateTime}
+            />
+            <input
+              type="hidden"
+              name="endDateTime"
+              value={timeSlot.endDateTime}
+            />
+            <input type="hidden" name="modality" value={timeSlot.modality} />
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Nombre completo *
               </label>
               <input
                 type="text"
+                name="patientName"
                 required
-                value={formData.patientName}
-                onChange={(e) =>
-                  setFormData({ ...formData, patientName: e.target.value })
-                }
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Tu nombre completo"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -222,15 +213,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </label>
               <input
                 type="text"
+                name="patientDni"
                 required
-                value={formData.patientDni}
-                onChange={(e) =>
-                  setFormData({ ...formData, patientDni: e.target.value })
-                }
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="12345678"
                 pattern="[0-9]{7,8}"
                 title="Ingresa un DNI válido (7-8 dígitos)"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -240,13 +229,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </label>
               <input
                 type="email"
+                name="patientEmail"
                 required
-                value={formData.patientEmail}
-                onChange={(e) =>
-                  setFormData({ ...formData, patientEmail: e.target.value })
-                }
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="tu@email.com"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -255,13 +242,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 Temática de consulta
               </label>
               <select
-                value={formData.specialty}
-                onChange={(e) =>
-                  setFormData({ ...formData, specialty: e.target.value })
-                }
+                name="specialty"
+                defaultValue={psychologist.specialties?.[0] || ""}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={isSubmitting}
               >
-                {psychologist.specialties.map((specialty) => (
+                {psychologist.specialties?.map((specialty: string) => (
                   <option key={specialty} value={specialty}>
                     {specialty}
                   </option>
@@ -298,9 +284,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             >
               {isSubmitting ? "Agendando..." : "Confirmar sesión"}
             </button>
-          </form>
+          </Form>
         </div>
       </div>
     </div>
   );
-};
+}

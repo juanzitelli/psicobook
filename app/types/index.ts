@@ -1,8 +1,9 @@
+// app/types/index.ts
 export interface Psychologist {
   id: string;
   name: string;
   specialties: string[];
-  modalities: ('online' | 'presencial')[];
+  modalities: ("online" | "presencial")[];
   avatar: string;
   rating: number;
   experience: number;
@@ -15,9 +16,9 @@ export interface TimeSlot {
   psychologistId: string;
   startDateTime: Date;
   endDateTime: Date;
-  modality: 'online' | 'presencial';
+  modality: "online" | "presencial";
   isBooked: boolean;
-  bookedBy?: string; // Session ID that booked this slot
+  bookedBy?: string | null;
 }
 
 export interface Session {
@@ -29,13 +30,17 @@ export interface Session {
   startDateTime: Date;
   endDateTime: Date;
   specialty: string;
-  modality: 'online' | 'presencial';
-  status: 'scheduled' | 'completed' | 'cancelled';
+  modality: "online" | "presencial";
+  status: "scheduled" | "completed" | "cancelled";
   createdAt: Date;
+  psychologist?: {
+    name: string;
+    avatar: string;
+  };
 }
 
 export interface Filter {
   specialty: string;
-  modality: 'all' | 'online' | 'presencial';
-  availability: 'all' | 'high' | 'low';
+  modality: "all" | "online" | "presencial";
+  availability: "all" | "high" | "low";
 }

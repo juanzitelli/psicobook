@@ -1,0 +1,76 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Modality {
+  online
+  presencial
+}
+
+enum SessionStatus {
+  scheduled
+  completed
+  cancelled
+}
+
+model Psychologist {
+  id           String    @id @default(cuid())
+  name         String
+  specialties  String    // JSON array as string
+  modalities   String    // JSON array as string
+  avatar       String
+  rating       Float
+  experience   Int
+  bio          String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  timeSlots    TimeSlot[]
+  sessions     Session[]
+  
+  @@map("psychologists")
+}
+
+model TimeSlot {
+  id             String      @id @default(cuid())
+  psychologistId String
+  startDateTime  DateTime
+  endDateTime    DateTime
+  modality       Modality    // Ahora usa el enum
+  isBooked       Boolean     @default(false)
+  bookedBy       String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  
+  psychologist   Psychologist @relation(fields: [psychologistId], references: [id], onDelete: Cascade)
+  session        Session?
+  
+  @@map("time_slots")
+}
+
+model Session {
+  id            String        @id @default(cuid())
+  psychologistId String
+  timeSlotId    String        @unique
+  patientName   String
+  patientDni    String
+  patientEmail  String
+  startDateTime DateTime
+  endDateTime   DateTime
+  specialty     String
+  modality      Modality      // Ahora usa el enum
+  status        SessionStatus @default(scheduled) // Ahora usa el enum
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  psychologist  Psychologist @relation(fields: [psychologistId], references: [id])
+  timeSlot      TimeSlot     @relation(fields: [timeSlotId], references: [id])
+  
+  @@index([patientDni, patientEmail])
+  @@map("sessions")
+}

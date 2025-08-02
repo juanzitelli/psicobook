@@ -1,6 +1,6 @@
-import { Filter as FilterIcon, X } from 'lucide-react';
-import React from 'react';
-import { Filter } from '../types';
+// app/components/FilterBar.tsx
+import { Filter as FilterIcon, X } from "lucide-react";
+import type { Filter } from "~/types";
 
 interface FilterBarProps {
   specialties: string[];
@@ -8,28 +8,31 @@ interface FilterBarProps {
   onFilterChange: (filter: Filter) => void;
 }
 
-export const FilterBar: React.FC<FilterBarProps> = ({
+export function FilterBar({
   specialties,
   currentFilter,
-  onFilterChange
-}) => {
+  onFilterChange,
+}: FilterBarProps) {
   const handleSpecialtyChange = (specialty: string) => {
     onFilterChange({ ...currentFilter, specialty });
   };
 
-  const handleModalityChange = (modality: Filter['modality']) => {
+  const handleModalityChange = (modality: Filter["modality"]) => {
     onFilterChange({ ...currentFilter, modality });
   };
 
-  const handleAvailabilityChange = (availability: Filter['availability']) => {
+  const handleAvailabilityChange = (availability: Filter["availability"]) => {
     onFilterChange({ ...currentFilter, availability });
   };
 
   const clearFilters = () => {
-    onFilterChange({ specialty: '', modality: 'all', availability: 'all' });
+    onFilterChange({ specialty: "", modality: "all", availability: "all" });
   };
 
-  const hasActiveFilters = currentFilter.specialty !== '' || currentFilter.modality !== 'all' || currentFilter.availability !== 'all';
+  const hasActiveFilters =
+    currentFilter.specialty !== "" ||
+    currentFilter.modality !== "all" ||
+    currentFilter.availability !== "all";
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6 mb-6">
@@ -74,25 +77,26 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           </label>
           <select
             value={currentFilter.modality}
-            onChange={(e) => handleModalityChange(e.target.value as Filter['modality'])}
+            onChange={(e) =>
+              handleModalityChange(e.target.value as Filter["modality"])
+            }
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="all">Todas las modalidades</option>
-            <option value="online">
-              Online
-            </option>
-            <option value="presencial">
-              Presencial
-            </option>
+            <option value="online">Online</option>
+            <option value="presencial">Presencial</option>
           </select>
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Disponibilidad
           </label>
           <select
             value={currentFilter.availability}
-            onChange={(e) => handleAvailabilityChange(e.target.value as Filter['availability'])}
+            onChange={(e) =>
+              handleAvailabilityChange(e.target.value as Filter["availability"])
+            }
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="all">Toda disponibilidad</option>
@@ -103,4 +107,4 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       </div>
     </div>
   );
-};
+}

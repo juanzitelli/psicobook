@@ -1,62 +1,45 @@
-import {
-  ArrowLeft,
-  Calendar,
-  Clock,
-  Filter as FilterIcon,
-  MapPin,
-  Monitor,
-} from "lucide-react";
-import React, { useState } from "react";
-import { Psychologist, TimeSlot } from "../types";
+// app/components/WeeklyCalendar.tsx
+import { Clock, Filter as FilterIcon, MapPin, Monitor } from "lucide-react";
+import { useState } from "react";
 import {
   formatTime,
   getDayNameFromDate,
   getNext30Days,
   isSameDay,
-} from "../utils/dateTime";
-import { BookingModal } from "./BookingModal";
+} from "~/utils/dateTime";
 
 interface WeeklyCalendarProps {
-  psychologist: Psychologist;
-  onBack: () => void;
+  psychologist: any; // Usamos any porque viene serializado de Remix
+  onSlotClick: (slot: any) => void; // any porque el slot viene serializado
 }
 
-export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
+export function WeeklyCalendar({
   psychologist,
-  onBack,
-}) => {
-  const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
-  const [showBookingModal, setShowBookingModal] = useState(false);
+  onSlotClick,
+}: WeeklyCalendarProps) {
   const [modalityFilter, setModalityFilter] = useState<
     "all" | "online" | "presencial"
   >("all");
-
   const next30Days = getNext30Days();
 
   const getSlotsByDate = (targetDate: Date) => {
-    let filteredSlots = psychologist.availability.filter(
-      (slot) => isSameDay(slot.startDateTime, targetDate) && !slot.isBooked
-    );
+    let filteredSlots = psychologist.availability.filter((slot: any) => {
+      // Convertir string a Date para comparación (viene serializado de Remix)
+      const slotDate = new Date(slot.startDateTime);
+      return isSameDay(slotDate, targetDate) && !slot.isBooked;
+    });
 
     if (modalityFilter !== "all") {
       filteredSlots = filteredSlots.filter(
-        (slot) => slot.modality === modalityFilter
+        (slot: any) => slot.modality === modalityFilter
       );
     }
 
-    return filteredSlots.sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime());
-  };
-
-  const handleSlotClick = (slot: TimeSlot) => {
-    if (!slot.isBooked) {
-      setSelectedSlot(slot);
-      setShowBookingModal(true);
-    }
-  };
-
-  const handleBookingClose = () => {
-    setShowBookingModal(false);
-    setSelectedSlot(null);
+    return filteredSlots.sort((a: any, b: any) => {
+      const dateA = new Date(a.startDateTime);
+      const dateB = new Date(b.startDateTime);
+      return dateA.getTime() - dateB.getTime();
+    });
   };
 
   const getModalityIcon = (modality: string) => {
@@ -70,34 +53,10 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
   const getModalityLabel = (modality: string) => {
     return modality === "online" ? "Online" : "Presencial";
   };
+
   return (
     <div className="bg-white rounded-xl shadow-lg">
       <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={onBack}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div className="flex items-center space-x-3">
-            <img
-              src={psychologist.avatar}
-              alt={psychologist.name}
-              className="w-12 h-12 rounded-full object-cover"
-            />
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                {psychologist.name}
-              </h2>
-              <p className="text-gray-600 flex items-center">
-                <Calendar className="w-4 h-4 mr-1" />
-                Próximos 30 días
-              </p>
-            </div>
-          </div>
-        </div>
-
         <div className="mt-4 flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <FilterIcon className="w-4 h-4 text-gray-600" />
@@ -150,7 +109,7 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4 max-h-96 overflow-y-auto">
           {next30Days.map((date) => {
             const daySlots = getSlotsByDate(date);
-            const dateKey = date.toISOString().split('T')[0];
+            const dateKey = date.toISOString().split("T")[0];
 
             return (
               <div
@@ -172,11 +131,10 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
                       Sin disponibilidad
                     </p>
                   ) : (
-                    daySlots.map((slot) => (
-                      
+                    daySlots.map((slot: any) => (
                       <button
                         key={slot.id}
-                        onClick={() => handleSlotClick(slot)}
+                        onClick={() => onSlotClick(slot)}
                         disabled={slot.isBooked}
                         className={`w-full p-2 rounded-md text-xs font-medium transition-all duration-200 flex items-center justify-center space-x-1 md:flex-col ${
                           slot.isBooked
@@ -187,7 +145,7 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
                         }`}
                       >
                         <div className="flex items-center space-x-1">
-                          <Clock className="w-3 h-3 hidden mg:inline" />
+                          <Clock className="w-3 h-3 hidden md:inline" />
                           <span>{formatTime(slot.startDateTime)}</span>
                         </div>
                         <div className="flex items-center space-x-1">
@@ -216,14 +174,6 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({
           </ul>
         </div>
       </div>
-
-      {showBookingModal && selectedSlot && (
-        <BookingModal
-          psychologist={psychologist}
-          timeSlot={selectedSlot}
-          onClose={handleBookingClose}
-        />
-      )}
     </div>
   );
-};
+}
