@@ -1,4 +1,3 @@
-// app/components/BookingModal.tsx
 import { Form } from "@remix-run/react";
 import {
   Calendar,
@@ -11,10 +10,11 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { formatDate, formatTimeRange } from "~/utils/dateTime";
+import type { Psychologist, TimeSlot } from "~/types";
 
 interface BookingModalProps {
-  psychologist: any; // any porque viene serializado de Remix
-  timeSlot: any; // any porque viene serializado de Remix
+  psychologist: Psychologist;
+  timeSlot: TimeSlot;
   onClose: () => void;
   actionData?: any;
   isSubmitting: boolean;
@@ -184,12 +184,12 @@ export function BookingModal({
             <input
               type="hidden"
               name="startDateTime"
-              value={timeSlot.startDateTime}
+              value={timeSlot.startDateTime.toISOString()}
             />
             <input
               type="hidden"
               name="endDateTime"
-              value={timeSlot.endDateTime}
+              value={timeSlot.endDateTime.toISOString()}
             />
             <input type="hidden" name="modality" value={timeSlot.modality} />
 

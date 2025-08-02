@@ -1,4 +1,3 @@
-// app/models/session.server.ts
 import { Modality } from "@prisma/client";
 import { db } from "~/lib/db.server";
 import type { Session } from "~/types";
@@ -14,7 +13,6 @@ export async function createSession(data: {
   specialty: string;
   modality: string;
 }) {
-  // Verificar que el slot esté disponible
   const timeSlot = await db.timeSlot.findUnique({
     where: { id: data.timeSlotId },
   });
@@ -23,7 +21,6 @@ export async function createSession(data: {
     throw new Error("El horario ya no está disponible");
   }
 
-  // Crear la sesión y marcar el slot como ocupado
   const session = await db.$transaction(async (tx) => {
     const newSession = await tx.session.create({
       data: {
@@ -81,7 +78,7 @@ export async function getSessionsByPatient(
     endDateTime: new Date(session.endDateTime),
     createdAt: new Date(session.createdAt),
     status: session.status as "scheduled" | "completed" | "cancelled",
-    modality: session.modality as "online" | "presencial", // Type assertion aquí
+    modality: session.modality as "online" | "presencial",
   }));
 }
 

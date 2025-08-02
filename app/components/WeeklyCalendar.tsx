@@ -1,4 +1,3 @@
-// app/components/WeeklyCalendar.tsx
 import { Clock, Filter as FilterIcon, MapPin, Monitor } from "lucide-react";
 import { useState } from "react";
 import {
@@ -7,10 +6,11 @@ import {
   getNext30Days,
   isSameDay,
 } from "~/utils/dateTime";
+import type { Psychologist, TimeSlot } from "~/types";
 
 interface WeeklyCalendarProps {
-  psychologist: any; // Usamos any porque viene serializado de Remix
-  onSlotClick: (slot: any) => void; // any porque el slot viene serializado
+  psychologist: Psychologist;
+  onSlotClick: (slot: TimeSlot) => void;
 }
 
 export function WeeklyCalendar({
@@ -23,21 +23,20 @@ export function WeeklyCalendar({
   const next30Days = getNext30Days();
 
   const getSlotsByDate = (targetDate: Date) => {
-    let filteredSlots = psychologist.availability.filter((slot: any) => {
-      // Convertir string a Date para comparación (viene serializado de Remix)
-      const slotDate = new Date(slot.startDateTime);
+    let filteredSlots = psychologist.availability.filter((slot: TimeSlot) => {
+      const slotDate = slot.startDateTime;
       return isSameDay(slotDate, targetDate) && !slot.isBooked;
     });
 
     if (modalityFilter !== "all") {
       filteredSlots = filteredSlots.filter(
-        (slot: any) => slot.modality === modalityFilter
+        (slot: TimeSlot) => slot.modality === modalityFilter
       );
     }
 
-    return filteredSlots.sort((a: any, b: any) => {
-      const dateA = new Date(a.startDateTime);
-      const dateB = new Date(b.startDateTime);
+    return filteredSlots.sort((a: TimeSlot, b: TimeSlot) => {
+      const dateA = a.startDateTime;
+      const dateB = b.startDateTime;
       return dateA.getTime() - dateB.getTime();
     });
   };
@@ -131,7 +130,7 @@ export function WeeklyCalendar({
                       Sin disponibilidad
                     </p>
                   ) : (
-                    daySlots.map((slot: any) => (
+                    daySlots.map((slot: TimeSlot) => (
                       <button
                         key={slot.id}
                         onClick={() => onSlotClick(slot)}

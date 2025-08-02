@@ -1,5 +1,4 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import {  } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { useState } from "react";
@@ -7,6 +6,7 @@ import { BookingModal } from "~/components/BookingModal";
 import { WeeklyCalendar } from "~/components/WeeklyCalendar";
 import { getPsychologistById } from "~/models/psychologist.server";
 import { checkSlotAvailability, createSession } from "~/models/session.server";
+import type { TimeSlot } from "~/types";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const { id } = params;
@@ -15,7 +15,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   const psychologist = await getPsychologistById(id);
   if (!psychologist) throw new Response("Not Found", { status: 404 });
 
-  return json({ psychologist });
+  return Response.json({ psychologist });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -28,7 +28,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
       const isAvailable = await checkSlotAvailability(timeSlotId);
       if (!isAvailable) {
-        return json(
+        return Response.json(
           {
             error:
               "Este horario ya no está disponible. Por favor, selecciona otro horario.",
@@ -52,9 +52,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         modality: formData.get("modality") as string,
       });
 
-      return json({ success: true });
+      return Response.json({ success: true });
     } catch (error) {
-      return json(
+      return Response.json(
         {
           error:
             error instanceof Error
@@ -66,17 +66,17 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
   }
 
-  return json({ error: "Acción no válida" }, { status: 400 });
+  return Response.json({ error: "Acción no válida" }, { status: 400 });
 };
 
 export default function PsychologistCalendar() {
   const { psychologist } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
-  const [selectedSlot, setSelectedSlot] = useState<any>(null);
+  const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
 
-  const handleSlotClick = (slot: any) => {
+  const handleSlotClick = (slot: TimeSlot) => {
     if (!slot.isBooked) {
       setSelectedSlot(slot);
       setShowBookingModal(true);
@@ -86,6 +86,10 @@ export default function PsychologistCalendar() {
   const handleBookingClose = () => {
     setShowBookingModal(false);
     setSelectedSlot(null);
+    
+    if (actionData?.success) {
+      window.location.reload();
+    }
   };
 
   return (

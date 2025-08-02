@@ -1,9 +1,7 @@
 // app/routes/_index.tsx
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import { useLoaderData, useSearchParams } from "@remix-run/react";
 import { Brain, Calendar, Filter as FilterIcon } from "lucide-react";
-import { useState } from "react";
 import { FilterBar } from "~/components/FilterBar";
 import { PsychologistCard } from "~/components/PsychologistCard";
 import { getPsychologists } from "~/models/psychologist.server";
@@ -33,7 +31,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     new Set(psychologists.flatMap((p) => p.specialties))
   ).sort();
 
-  return json({
+  return Response.json({
     psychologists,
     specialties,
     currentFilter: { specialty, modality, availability },

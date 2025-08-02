@@ -1,4 +1,3 @@
-// app/models/psychologist.server.ts
 import { db } from "~/lib/db.server";
 import type { Psychologist } from "~/types";
 
@@ -22,7 +21,7 @@ export async function getPsychologists(): Promise<Psychologist[]> {
     id: p.id,
     name: p.name,
     specialties: JSON.parse(p.specialties),
-    modalities: JSON.parse(p.modalities),
+    modalities: JSON.parse(p.modalities) as ("online" | "presencial")[],
     avatar: p.avatar,
     rating: p.rating,
     experience: p.experience,
@@ -64,7 +63,7 @@ export async function getPsychologistById(
     id: psychologist.id,
     name: psychologist.name,
     specialties: JSON.parse(psychologist.specialties),
-    modalities: JSON.parse(psychologist.modalities),
+    modalities: JSON.parse(psychologist.modalities) as ("online" | "presencial")[],
     avatar: psychologist.avatar,
     rating: psychologist.rating,
     experience: psychologist.experience,
