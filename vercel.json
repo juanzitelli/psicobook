@@ -1,22 +1,3 @@
 {
-
-  "framework": "remix",
-  "buildCommand": "remix vite:build",
-  "devCommand": "remix dev",
-  "installCommand": "npm install",
-  "functions": {
-    "app/entry.server.tsx": {
-      "includeFiles": "build/**"
-    }
-  },
-  "routes": [
-    {
-      "src": "/build/(.*)",
-      "dest": "/build/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/app/entry.server.tsx"
-    }
-  ]
+  "framework": "remix"
 }
