@@ -3,26 +3,28 @@
     "remix.env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "vite.config.ts"
+    "vite.config.ts",
+    ".eslintrc.cjs"
   ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES6"],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "target": "ES2022",
+    "module": "ESNext",
     "strict": true,
     "allowJs": true,
     "skipLibCheck": true,
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       "~/*": ["./app/*"]
     },
     "noEmit": true,
-    "types": ["@remix-run/node", "vite/client"]
+    "types": ["@remix-run/node", "vite/client", "node"]
   }
 }

@@ -12,14 +12,27 @@ export default defineConfig({
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
         v3_throwAbortReason: true,
+        v3_lazyRouteDiscovery: true,
+        v3_singleFetch: true,
       },
     }),
     tsconfigPaths(),
   ],
   server: {
     port: 3000,
+    host: true,
   },
   build: {
     target: "esnext",
+    minify: "esbuild",
+    rollupOptions: {
+      external: ["@prisma/client"],
+    },
+  },
+  optimizeDeps: {
+    include: ["react", "react-dom", "lucide-react"],
+  },
+  ssr: {
+    noExternal: ["lucide-react"],
   },
 });
