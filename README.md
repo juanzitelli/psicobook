@@ -49,10 +49,13 @@ Shows a 30-day calendar with available time slots for a psychologist. Users can 
 
 ## Technologies
 
-- React with TypeScript
+- Remix (React framework with server-side rendering)
+- TypeScript
 - Tailwind CSS for styling
 - Lucide React icons
-- Custom hooks and utility functions for date formatting and local storage
+- PostgreSQL database hosted on Neon
+- Prisma ORM for database management
+- Custom hooks and utility functions for date formatting
 
 ---
 
@@ -60,7 +63,7 @@ Shows a 30-day calendar with available time slots for a psychologist. Users can 
 
 ### Prerequisites
 
-- Node.js (version 20 or higher)
+- Node.js (version 20.11.0)
 - npm package manager available
 
 ### Setup
@@ -78,21 +81,65 @@ cd psicobook
 npm install
 ```
 
-3. Run the development server:
+3. Set up your database:
+
+#### Create a Neon Database
+
+1. Go to [Neon Console](https://console.neon.tech/)
+2. Sign up or log in to your account
+3. Click "Create Project"
+4. Choose a project name (e.g., "psicobook")
+5. Select your preferred region
+6. Copy the connection string provided
+
+#### Configure Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+DATABASE_URL="your-neon-connection-string-here"
+```
+
+Replace `your-neon-connection-string-here` with the connection string from Neon.
+
+4. Set up the database schema:
+
+```bash
+# Generate Prisma client
+npm run db:generate
+
+# Push the schema to your database
+npm run db:push
+```
+
+5. Seed the database with sample data:
+
+```bash
+npm run db:seed
+```
+
+6. Run the development server:
 
 ```bash
 npm run dev
 ```
 
-4. Open your browser and navigate to:
+7. Open your browser and navigate to:
 
 ```
-http://localhost:5173/
+http://localhost:3000/
 ```
+
+### Database Commands
+
+- **Generate Prisma client**: `npm run db:generate`
+- **Push schema changes**: `npm run db:push`
+- **Seed database**: `npm run db:seed`
 
 ### Additional Tips
 
-- Make sure to have Node.js installed.
+- Make sure to have Node.js version 20.11.0 installed.
+- The seed script will populate your database with sample psychologists and availability data.
 
 #### To build for production:
 
@@ -100,21 +147,33 @@ http://localhost:5173/
 npm run build
 ```
 
+#### To start the production server:
+
+```bash
+npm start
+```
+
+#### To check TypeScript types:
+
+```bash
+npm run typecheck
+```
+
 ---
 
 ## Notes
 
-- All bookings are stored locally in your browser's storage.
+- All bookings are stored in a PostgreSQL database hosted on Neon.
 - Cancelations are immediate and free up the slot.
--
+- The database schema is managed with Prisma ORM.
+
+---
 
 # Things I'd have loved to add
 
-First and foremost, I would have liked to integrate an API that manages everything from a backend server, storing all data in a database and enabling a full flow of loading schedules and other information for psychologists.
+I would have liked to implement a "15-minute lock" logic during the booking process to prevent double bookings if multiple users attempt to reserve the same slot simultaneously.
 
-I also would have liked to implement a "15-minute lock" logic during the booking process to prevent double bookings if multiple users attempt to reserve the same slot simultaneously.
-
-Validation improvements would be a priority, including basic client-side validation such as ensuring the email format is correct, and business logic validations like preventing booking already occupied slots.
+Validation improvements would be a priority, including enhanced client-side validation such as ensuring the email format is correct, and business logic validations like preventing booking already occupied slots.
 
 Additionally, I would have liked to persist user information for quick identification during future bookings, enhancing user experience.
 
@@ -125,3 +184,4 @@ Other features I would have considered include:
 - A matchmaking algorithm to rank psychologists based on how well they match user preferences, increasing the likelihood of a good fit.
 
 ---
+
