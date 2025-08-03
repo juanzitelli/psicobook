@@ -35,8 +35,8 @@ export function WeeklyCalendar({
     }
 
     return filteredSlots.sort((a: TimeSlot, b: TimeSlot) => {
-      const dateA = a.startDateTime;
-      const dateB = b.startDateTime;
+      const dateA = new Date(a.startDateTime);
+      const dateB = new Date(b.startDateTime);
       return dateA.getTime() - dateB.getTime();
     });
   };

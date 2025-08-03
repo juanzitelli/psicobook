@@ -184,12 +184,12 @@ export function BookingModal({
             <input
               type="hidden"
               name="startDateTime"
-              value={timeSlot.startDateTime.toISOString()}
+              value={new Date(timeSlot.startDateTime).toISOString()}
             />
             <input
               type="hidden"
               name="endDateTime"
-              value={timeSlot.endDateTime.toISOString()}
+              value={new Date(timeSlot.endDateTime).toISOString()}
             />
             <input type="hidden" name="modality" value={timeSlot.modality} />
 
