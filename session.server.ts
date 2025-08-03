@@ -13,6 +13,7 @@ export async function createSession(data: {
   specialty: string;
   modality: string;
 }) {
+  console.log({ timeSlotId: data.timeSlotId });
   const timeSlot = await db.timeSlot.findUnique({
     where: { id: data.timeSlotId },
   });

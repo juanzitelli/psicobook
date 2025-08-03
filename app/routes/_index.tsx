@@ -55,8 +55,16 @@ export default function Index() {
   };
 
   // Filtrar psicólogos en el cliente para mejor UX
-  const filteredPsychologists = psychologists.filter(
-    (psychologist: Psychologist) => {
+  const filteredPsychologists = psychologists
+    .map((psychologist) => ({
+      ...psychologist,
+      availability: psychologist.availability.map((item) => ({
+        ...item,
+        endDateTime: new Date(item.endDateTime),
+        startDateTime: new Date(item.startDateTime),
+      })),
+    }))
+    .filter((psychologist: Psychologist) => {
       if (
         currentFilter.specialty &&
         !psychologist.specialties.includes(currentFilter.specialty)
@@ -89,8 +97,7 @@ export default function Index() {
       }
 
       return true;
-    }
-  );
+    });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -135,7 +142,7 @@ export default function Index() {
 
         <FilterBar
           specialties={specialties}
-          currentFilter={currentFilter}
+          currentFilter={(currentFilter as unknown as Filter)}
           onFilterChange={handleFilterChange}
         />
 

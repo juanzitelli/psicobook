@@ -33,13 +33,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
       const isAvailable = await checkSlotAvailability(timeSlotId);
       if (!isAvailable) {
-        return data(
-          {
-            error:
-              "Este horario ya no está disponible. Por favor, selecciona otro horario.",
-          },
-          400
-        );
+        return {
+          error:
+            "Este horario ya no está disponible. Por favor, selecciona otro horario.",
+        };
       }
 
       const startDateTimeStr = formData.get("startDateTime") as string;
@@ -51,23 +48,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         patientName: formData.get("patientName") as string,
         patientDni: formData.get("patientDni") as string,
         patientEmail: formData.get("patientEmail") as string,
-        startDateTime: new Date(startDateTimeStr),
-        endDateTime: new Date(endDateTimeStr),
+        startDateTime: startDateTimeStr,
+        endDateTime: endDateTimeStr,
         specialty: formData.get("specialty") as string,
         modality: formData.get("modality") as string,
       });
 
       return { success: true };
     } catch (error) {
-      return data(
-        {
-          error:
-            error instanceof Error
-              ? error.message
-              : "Error al agendar la sesión",
-        },
-        400
-      );
+      return {
+        error:
+          error instanceof Error ? error.message : "Error al agendar la sesión",
+      };
     }
   }
 
@@ -131,15 +123,27 @@ export default function PsychologistCalendar() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <WeeklyCalendar
-          // @ts-expect-error
-          psychologist={psychologist}
+          psychologist={{
+            ...psychologist,
+            availability: psychologist.availability.map((item) => ({
+              ...item,
+              endDateTime: new Date(item.endDateTime),
+              startDateTime: new Date(item.startDateTime),
+            })),
+          }}
           onSlotClick={handleSlotClick}
         />
 
         {showBookingModal && selectedSlot && (
           <BookingModal
-            // @ts-expect-error
-            psychologist={psychologist}
+            psychologist={{
+              ...psychologist,
+              availability: psychologist.availability.map((item) => ({
+                ...item,
+                endDateTime: new Date(item.endDateTime),
+                startDateTime: new Date(item.startDateTime),
+              })),
+            }}
             timeSlot={selectedSlot}
             onClose={handleBookingClose}
             actionData={actionData}
