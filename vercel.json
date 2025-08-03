@@ -7,6 +7,9 @@
   "functions": {
     "build/server/index.js": {
       "runtime": "nodejs20.x"
+    },
+    "app/entry.server.tsx": {
+      "runtime": "@vercel/node@18"
     }
   },
   "routes": [
