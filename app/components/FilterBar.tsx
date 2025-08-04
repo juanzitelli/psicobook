@@ -1,4 +1,3 @@
-// app/components/FilterBar.tsx
 import { Filter as FilterIcon, X } from "lucide-react";
 import type { Filter } from "~/types";
 

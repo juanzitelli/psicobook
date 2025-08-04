@@ -39,24 +39,21 @@ function generateTimeSlots(psychologistId: string, modalities: string[]) {
   const slots = [];
   const today = new Date();
 
-  // Generar slots para los próximos 30 días
   for (let day = 0; day < 30; day++) {
     const date = new Date(today);
     date.setDate(today.getDate() + day);
 
-    // Skip weekends
     if (date.getDay() === 0 || date.getDay() === 6) continue;
 
-    // Generate 4-6 slots per day
     const slotsPerDay = Math.floor(Math.random() * 3) + 4;
 
     for (let slot = 0; slot < slotsPerDay; slot++) {
-      const hour = 9 + Math.floor(Math.random() * 8); // 9 AM to 5 PM
+      const hour = 9 + Math.floor(Math.random() * 8);
       const startDateTime = new Date(date);
       startDateTime.setHours(hour, 0, 0, 0);
 
       const endDateTime = new Date(startDateTime);
-      endDateTime.setMinutes(50); // 50 minute sessions
+      endDateTime.setMinutes(50);
 
       const modalityString =
         modalities[Math.floor(Math.random() * modalities.length)];
@@ -68,7 +65,7 @@ function generateTimeSlots(psychologistId: string, modalities: string[]) {
         startDateTime,
         endDateTime,
         modality,
-        isBooked: Math.random() < 0.3, // 30% chance of being booked
+        isBooked: Math.random() < 0.3,
       });
     }
   }
@@ -79,12 +76,10 @@ function generateTimeSlots(psychologistId: string, modalities: string[]) {
 async function seed() {
   console.log("🌱 Seeding database...");
 
-  // Clean existing data
   await db.session.deleteMany();
   await db.timeSlot.deleteMany();
   await db.psychologist.deleteMany();
 
-  // Create psychologists
   for (const psychologist of psychologists) {
     const created = await db.psychologist.create({
       data: {
@@ -98,7 +93,6 @@ async function seed() {
       },
     });
 
-    // Generate time slots for this psychologist
     const timeSlots = generateTimeSlots(created.id, psychologist.modalities);
 
     for (const slot of timeSlots) {

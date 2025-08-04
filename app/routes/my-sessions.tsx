@@ -138,7 +138,6 @@ export default function MySessions() {
     return modality === "online" ? "Online" : "Presencial";
   };
 
-  // Type guard para verificar si actionData tiene sessions
   const hasSessionsData = (
     data: any
   ): data is {

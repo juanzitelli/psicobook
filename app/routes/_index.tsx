@@ -26,7 +26,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const psychologists = await getPsychologists();
 
-  // Obtener especialidades únicas
   const specialties = Array.from(
     new Set(psychologists.flatMap((p) => p.specialties))
   ).sort();
@@ -55,7 +54,6 @@ export default function Index() {
     setSearchParams(newSearchParams);
   };
 
-  // Filtrar psicólogos en el cliente para mejor UX
   const filteredPsychologists = psychologists
     .map((psychologist) => ({
       ...psychologist,

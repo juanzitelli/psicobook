@@ -21,8 +21,8 @@ enum SessionStatus {
 model Psychologist {
   id          String     @id @default(cuid())
   name        String
-  specialties String // JSON array as string
-  modalities  String // JSON array as string
+  specialties String
+  modalities  String
   avatar      String
   rating      Float
   experience  Int

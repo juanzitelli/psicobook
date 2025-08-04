@@ -1,4 +1,3 @@
-// app/lib/db.server.ts
 import { PrismaClient } from "@prisma/client";
 
 let db: PrismaClient;

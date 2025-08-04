@@ -1,4 +1,3 @@
-// app/components/PsychologistCard.tsx
 import { Clock, MapPin, Monitor, Star, User } from "lucide-react";
 import { Link } from "@remix-run/react";
 import type { Psychologist } from "~/types";

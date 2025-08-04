@@ -1,4 +1,3 @@
-// app/utils/dateTime.ts
 export const formatDate = (date: Date | string): string => {
   const dateObj = typeof date === "string" ? new Date(date) : date;
   return new Intl.DateTimeFormat("es-AR", {
@@ -52,7 +51,6 @@ export const isSameDay = (
   const dateObj1 = typeof date1 === "string" ? new Date(date1) : date1;
   const dateObj2 = typeof date2 === "string" ? new Date(date2) : date2;
 
-  // Verificar que las fechas son válidas
   if (isNaN(dateObj1.getTime()) || isNaN(dateObj2.getTime())) {
     console.error("Invalid dates:", { date1, date2 });
     return false;
@@ -65,7 +63,6 @@ export const isSameDay = (
   );
 };
 
-// Función helper para asegurar que tenemos un objeto Date válido
 export const ensureDate = (date: Date | string | null | undefined): Date => {
   if (!date) {
     return new Date();

@@ -1,4 +1,3 @@
-// app/types/index.ts
 export interface Psychologist {
   id: string;
   name: string;
