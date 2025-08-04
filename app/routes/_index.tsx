@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { useLoaderData, useSearchParams } from "@remix-run/react";
 import { Brain, Calendar, Filter as FilterIcon } from "lucide-react";
@@ -40,6 +41,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Index() {
   const { psychologists, specialties, currentFilter } =
     useLoaderData<typeof loader>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
 
   const handleFilterChange = (filter: Filter) => {

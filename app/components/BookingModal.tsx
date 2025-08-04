@@ -16,6 +16,7 @@ interface BookingModalProps {
   psychologist: Psychologist;
   timeSlot: TimeSlot;
   onClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   actionData?: any;
   isSubmitting: boolean;
 }

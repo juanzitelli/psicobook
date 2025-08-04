@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Form, useActionData, useNavigation } from "@remix-run/react";
 import {
@@ -14,10 +15,10 @@ import {
   User,
   XCircle,
 } from "lucide-react";
-import { act, useState } from "react";
+import { useState } from "react";
 import { cancelSession, getSessionsByPatient } from "~/models/session.server";
-import { formatDate, formatTimeRange } from "~/utils/dateTime";
 import type { Session } from "~/types";
+import { formatDate, formatTimeRange } from "~/utils/dateTime";
 
 export const meta: MetaFunction = () => {
   return [
@@ -296,7 +297,7 @@ export default function MySessions() {
               <p className="text-sm text-gray-600">
                 Se encontraron {sessions.length} sesión(es)
               </p>
-              {/* @ts-expect-error */}
+              {/* @ts-expect-error Type error*/}
               {sessions.map((session: Session) => (
                 <div
                   key={session.id}

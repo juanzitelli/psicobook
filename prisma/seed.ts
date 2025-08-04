@@ -1,18 +1,6 @@
-// prisma/seed.ts
-import { PrismaClient, Modality } from "@prisma/client";
+import { Modality, PrismaClient } from "@prisma/client";
 
 const db = new PrismaClient();
-
-const specialties = [
-  "Ansiedad",
-  "Depresión",
-  "Terapia de pareja",
-  "Trastornos alimentarios",
-  "Adicciones",
-  "Duelo",
-  "Autoestima",
-  "Estrés laboral",
-];
 
 const psychologists = [
   {

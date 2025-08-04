@@ -84,7 +84,7 @@ export default function PsychologistCalendar() {
     setShowBookingModal(false);
     setSelectedSlot(null);
 
-    // @ts-expect-error
+    // @ts-expect-error Type error
     if (actionData?.success) {
       window.location.reload();
     }
