@@ -8,7 +8,7 @@ import {
 import { ArrowLeft, Calendar } from "lucide-react";
 import { useState } from "react";
 import { BookingModal } from "~/components/BookingModal";
-import { WeeklyCalendar } from "~/components/WeeklyCalendar";
+import { MonthlyCalendar } from "~/components/MonthlyCalendar";
 import { getPsychologistById } from "~/models/psychologist.server";
 import { checkSlotAvailability, createSession } from "~/models/session.server";
 import type { TimeSlot } from "~/types";
@@ -29,6 +29,17 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (intent === "book") {
     try {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      const isEmailValid = emailRegex.test(
+        formData.get("patientEmail") as string
+      );
+
+      if (!isEmailValid) {
+        return {
+          error: "El correo electrónico proporcionado no es válido.",
+        };
+      }
+
       const timeSlotId = formData.get("timeSlotId") as string;
 
       const isAvailable = await checkSlotAvailability(timeSlotId);
@@ -122,7 +133,7 @@ export default function PsychologistCalendar() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <WeeklyCalendar
+        <MonthlyCalendar
           psychologist={{
             ...psychologist,
             availability: psychologist.availability.map((item) => ({

@@ -32,7 +32,7 @@ View, search, and manage your scheduled sessions, including cancellation.
 
 Displays a psychologist's profile with availability and a button to view their calendar.
 
-### `WeeklyCalendar`
+### `MonthlyCalendar`
 
 Shows a 30-day calendar with available time slots for a psychologist. Users can select a slot to book.
 
@@ -184,4 +184,3 @@ Other features I would have considered include:
 - A matchmaking algorithm to rank psychologists based on how well they match user preferences, increasing the likelihood of a good fit.
 
 ---
-

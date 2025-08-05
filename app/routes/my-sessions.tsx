@@ -354,6 +354,16 @@ export default function MySessions() {
                       <span className="text-sm font-medium">
                         {getStatusText(session.status)}
                       </span>
+                      {session.status === "scheduled" && (
+                        <a
+                          href={`/sessions/${session.id}/reschedule`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-2 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-lg text-xs font-medium hover:bg-yellow-200 transition-colors"
+                        >
+                          Reagendar
+                        </a>
+                      )}
                     </div>
                   </div>
 

@@ -8,15 +8,15 @@ import {
 } from "~/utils/dateTime";
 import type { Psychologist, TimeSlot } from "~/types";
 
-interface WeeklyCalendarProps {
+interface MonthlyCalendarProps {
   psychologist: Psychologist;
   onSlotClick: (slot: TimeSlot) => void;
 }
 
-export function WeeklyCalendar({
+export function MonthlyCalendar({
   psychologist,
   onSlotClick,
-}: WeeklyCalendarProps) {
+}: MonthlyCalendarProps) {
   const [modalityFilter, setModalityFilter] = useState<
     "all" | "online" | "presencial"
   >("all");

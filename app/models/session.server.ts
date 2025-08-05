@@ -82,6 +82,33 @@ export async function getSessionsByPatient(
   }));
 }
 
+export async function getSessionById(
+  sessionId: string
+): Promise<Session | null> {
+  const session = await db.session.findUnique({
+    where: { id: sessionId },
+    include: {
+      psychologist: {
+        select: {
+          name: true,
+          avatar: true,
+        },
+      },
+    },
+  });
+
+  if (!session) return null;
+
+  return {
+    ...session,
+    startDateTime: new Date(session.startDateTime),
+    endDateTime: new Date(session.endDateTime),
+    createdAt: new Date(session.createdAt),
+    status: session.status as "scheduled" | "completed" | "cancelled",
+    modality: session.modality as "online" | "presencial",
+  };
+}
+
 export async function cancelSession(sessionId: string) {
   const session = await db.session.findUnique({
     where: { id: sessionId },
@@ -96,11 +123,12 @@ export async function cancelSession(sessionId: string) {
   }
 
   await db.$transaction(async (tx) => {
-    await tx.session.update({
+    // Eliminar la sesión
+    await tx.session.delete({
       where: { id: sessionId },
-      data: { status: "cancelled" },
     });
 
+    // Liberar el timeSlot
     await tx.timeSlot.update({
       where: { id: session.timeSlotId },
       data: {
